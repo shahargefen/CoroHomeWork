@@ -3,7 +3,6 @@ package com.example.Coro;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +22,9 @@ public class MessageController {
 
     @Bean(name = "threadPoolTaskExecutor")
     public Executor threadPoolTaskExecutor() {
-        return new ThreadPoolTaskExecutor();
+        ThreadPoolTaskExecutor threadPoolTaskExecutor= new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.setMaxPoolSize(300);
+        return threadPoolTaskExecutor;
     }
 
 
