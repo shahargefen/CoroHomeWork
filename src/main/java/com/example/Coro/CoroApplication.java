@@ -14,9 +14,4 @@ public class CoroApplication {
 		SpringApplication.run(CoroApplication.class, args);
 	}
 
-
-
-
-
-
 }

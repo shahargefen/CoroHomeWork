@@ -3,7 +3,6 @@ package com.example.Coro;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +16,11 @@ public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
+
+
+    //This function check with CheckMessage function if there is a valid credit card in the message.
+    //if there is inserting to the mongoDB.
+    //return message of success or failure.
     public String insertMessage(Message message){
         List<String> detections = CheckMessage(message);
         if(!detections.isEmpty()){
@@ -30,21 +34,30 @@ public class MessageService {
         }
     }
 
+    //The function get message and check in the body and the subject if there is a valid credit card number.
+    //The function return list of the valid credit cards.
     public List<String> CheckMessage(Message message) {
         List<String> allMatches = new ArrayList<String>();
         String body = message.getBody().toLowerCase();
         String subject = message.getSubject().toLowerCase();
+        //check 3 formats of credit numbers
+        //1 - 16 numbers in a row example 1234567890123456
+        //2 - 4 times of 4 number with space between them example 1234 1234 1234 1234
+        //3 - 4 times of 4 numbers with '-' between them example 1234-1234-1234-1234
         String ccPattern = "(?<!\\d)\\d{16}(?!\\d)|(?<!\\d)\\d{4}[-]\\d{4}[-]\\d{4}[-]\\d{4}(?!\\d)|(?<!\\d)\\d{4}[ ]\\d{4}[ ]\\d{4}[ ]\\d{4}(?!\\d)";
         Pattern pattern = Pattern.compile(ccPattern);
         Matcher matcherBody = pattern.matcher(body);
         Matcher matcherSubject = pattern.matcher(subject);
 
+        //find all the credit card in the subject message of the regex pattern.
         while(matcherSubject.find()){
             String creditNumSubject=matcherSubject.group();
             if(LuhnAlgorithm(creditNumSubject)) {
                 allMatches.add(creditNumSubject);
             }
         }
+
+        //find all the credit card in the body message of the regex pattern.
         while(matcherBody.find()){
             String creditNumBody=matcherBody.group();
             if(LuhnAlgorithm(creditNumBody))
@@ -59,7 +72,7 @@ public class MessageService {
 
     public static boolean LuhnAlgorithm(String cardNumber)
     {
-        // int array for processing the cardNumber
+        //check if the credit card is in 0000-0000-0000-0000 format
         if(cardNumber.contains("-")) {
             String[] splitCardNumber = cardNumber.split("-", 5);
             cardNumber="";
@@ -67,6 +80,8 @@ public class MessageService {
                 cardNumber=cardNumber+splitCardNumber[i];
             }
         }
+
+        //check if the credit card is in 0000 0000 0000 0000 format
         if(cardNumber.contains(" ")) {
             String[] splitCardNumber = cardNumber.split(" ", 5);
             cardNumber="";
@@ -75,6 +90,7 @@ public class MessageService {
             }
         }
 
+        // int array for processing the cardNumber
         int[] cardIntArray=new int[cardNumber.length()];
 
         for(int i=0;i<cardNumber.length();i++)
