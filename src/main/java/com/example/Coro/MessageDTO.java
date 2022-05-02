@@ -1,37 +1,25 @@
 package com.example.Coro;
 
-
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
 import java.util.List;
 
-@Document
-public class Message {
-
+public class MessageDTO {
     @Id
-    private String messageID;
-    private String dtoID;
+    private String id;
     private String sender;
     private List<String> recipients;
     private String subject;
     private String body;
     private long sendTime;
-    private List<String> detections;
 
 
-    public Message(String dtoID,String sender, List<String> recipients, String subject, String body) {
-        this.dtoID=dtoID;
+    public MessageDTO(String sender, List<String> recipients, String subject, String body) {
         this.sender = sender;
         this.recipients = recipients;
         this.subject = subject;
         this.body = body;
-        this.sendTime=(Instant.now().toEpochMilli());
-
     }
-
-
 
     public String getSender() {
         return sender;
@@ -53,15 +41,6 @@ public class Message {
         return subject;
     }
 
-    public String getMessageID() {
-        return messageID;
-    }
-
-    public String getDtoID() {
-        return dtoID;
-    }
-
-
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -74,16 +53,11 @@ public class Message {
         this.body = body;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public long getSendTime() {
         return sendTime;
-    }
-
-
-    public List<String> getDetections() {
-        return detections;
-    }
-
-    public void setDetections(List<String> detections) {
-        this.detections = detections;
     }
 }

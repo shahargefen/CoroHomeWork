@@ -20,17 +20,9 @@ public class MessageController {
     private MessageService messageService;
 
 
-    @Bean(name = "threadPoolTaskExecutor")
-    public Executor threadPoolTaskExecutor() {
-        ThreadPoolTaskExecutor threadPoolTaskExecutor= new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setMaxPoolSize(300);
-        return threadPoolTaskExecutor;
-    }
-
-
-    @Async("threadPoolTaskExecutor")
     @PostMapping("/message")
-    public String postMessage(@RequestBody Message message){
+    public String postMessage(@RequestBody MessageDTO messageDTO){
+        Message message=new Message(messageDTO.getId(),messageDTO.getSender(),messageDTO.getRecipients(),messageDTO.getSubject(),messageDTO.getBody());
 
         return messageService.insertMessage(message);
 
